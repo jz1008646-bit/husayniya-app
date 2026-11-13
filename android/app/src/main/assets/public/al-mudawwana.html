@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>المدونة الحسينية | النسخة العامة المتكاملة</title>
+  <meta name="description" content="المدونة الحسينية: القرآن الكريم كاملاً بأصوات شيعية، الأدعية والأحاديث الصحيحة، العتبات المقدسة، الصحابة والعلماء، الكتب الحوزوية، الستوري، وساحة المناقشة." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+            amiri: ['Amiri', 'serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <!-- Firebase Compat SDKs (عام - ضع بيانات مشروعك عند الرفع على استضافة) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+    .font-amiri { font-family: 'Amiri', serif; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-[#FAF8F4] text-[#1C1917] dark:bg-[#0B1117] dark:text-[#F3EFE6] min-h-screen flex flex-col">
+
+  <!-- Top Header (3 Zones) -->
+  <header class="sticky top-0 z-30 h-16 bg-[#FAF8F4]/95 dark:bg-[#0B1117]/95 backdrop-blur-md border-b border-[#E7E1D6] dark:border-[#1F2B37]">
+    <div class="max-w-7xl mx-auto h-full px-4 md:px-6 flex items-center justify-between gap-6">
+      <button type="button" onclick="navigate('home')" class="font-amiri text-2xl font-bold text-[#0F5132] dark:text-emerald-400 whitespace-nowrap shrink-0 cursor-pointer">
+        المدونة الحسينية
+      </button>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm font-semibold">
+        <button type="button" onclick="navigate('home')" class="nav-link hover:text-[#0F5132] dark:hover:text-emerald-400 whitespace-nowrap cursor-pointer">الرئيسية</button>
+        <button type="button" onclick="navigate('quran')" class="nav-link hover:text-[#0F5132] dark:hover:text-emerald-400 whitespace-nowrap cursor-pointer">القرآن والأدعية</button>
+        <button type="button" onclick="navigate('places')" class="nav-link hover:text-[#0F5132] dark:hover:text-emerald-400 whitespace-nowrap cursor-pointer">الأماكن والشخصيات</button>
+        <button type="button" onclick="navigate('library')" class="nav-link hover:text-[#0F5132] dark:hover:text-emerald-400 whitespace-nowrap cursor-pointer">المكتبة والدروس</button>
+        <button type="button" onclick="navigate('forum')" class="nav-link hover:text-[#0F5132] dark:hover:text-emerald-400 whitespace-nowrap cursor-pointer">ساحة المناقشة</button>
+      </nav>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="navigate('tasbih')" class="min-h-[42px] px-4 py-2 rounded-xl bg-[#0F5132] hover:bg-[#0B3D26] text-white text-xs md:text-sm font-semibold whitespace-nowrap cursor-pointer">
+          المسبحة الإلكترونية
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Quick Section Ribbon -->
+  <div class="bg-white/90 dark:bg-[#121A22]/90 border-b border-[#E7E1D6] dark:border-[#1F2B37]">
+    <div id="subRibbon" class="max-w-7xl mx-auto px-4 md:px-6 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar"></div>
+  </div>
+
+  <!-- Main Content -->
+  <main id="appMain" class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-6 py-6 md:py-8"></main>
+
+  <!-- Footer -->
+  <footer class="max-w-7xl w-full mx-auto px-4 md:px-6 pt-6 pb-20 md:pb-8 border-t border-[#E7E1D6] dark:border-[#1F2B37] flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-stone-500 dark:text-stone-400">
+    <div class="text-center md:text-right space-y-1">
+      <p class="font-amiri text-sm font-bold text-stone-800 dark:text-stone-200">المدونة الحسينية · للعبادة والعلم والمعرفة</p>
+      <p class="font-semibold text-[#0F5132] dark:text-emerald-400">جميع الحقوق محفوظة © للمطور موسى جليل</p>
+    </div>
+    <div class="flex flex-wrap items-center justify-center gap-4">
+      <button type="button" onclick="navigate('duas')" class="hover:text-stone-900 dark:hover:text-white cursor-pointer">الأدعية والأحاديث</button>
+      <button type="button" onclick="navigate('quran')" class="hover:text-stone-900 dark:hover:text-white cursor-pointer">القرآن</button>
+      <button type="button" onclick="navigate('library')" class="hover:text-stone-900 dark:hover:text-white cursor-pointer">المكتبة</button>
+      <button type="button" onclick="navigate('forum')" class="hover:text-stone-900 dark:hover:text-white cursor-pointer">المناقشة</button>
+      <button type="button" onclick="navigate('profile')" class="hover:text-stone-900 dark:hover:text-white cursor-pointer">الملف الشخصي</button>
+      <button type="button" onclick="toggleTheme()" class="hover:text-stone-900 dark:hover:text-white cursor-pointer">تبديل المظهر</button>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Bar -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 h-14 bg-white/95 dark:bg-[#121A22]/95 backdrop-blur-md border-t border-[#E7E1D6] dark:border-[#1F2B37] grid grid-cols-5 text-[11px] font-semibold">
+    <button type="button" onclick="navigate('home')" class="flex flex-col items-center justify-center cursor-pointer">الرئيسية</button>
+    <button type="button" onclick="navigate('quran')" class="flex flex-col items-center justify-center cursor-pointer">القرآن</button>
+    <button type="button" onclick="navigate('places')" class="flex flex-col items-center justify-center cursor-pointer">العتبات</button>
+    <button type="button" onclick="navigate('forum')" class="flex flex-col items-center justify-center cursor-pointer">المناقشة</button>
+    <button type="button" onclick="navigate('profile')" class="flex flex-col items-center justify-center cursor-pointer">ملفي</button>
+  </nav>
+
+  <!-- Global Modal Container -->
+  <div id="modalOverlay" class="hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeModal()">
+    <div id="modalCard" class="w-full max-w-3xl rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 md:p-8 shadow-2xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()"></div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       1. إعدادات Firebase العامة (استبدل القيم ببيانات مشروعك من Firebase Console)
+       ملاحظة: إذا بقيت القيم الافتراضية، يعمل التطبيق بحفظ محلي متكامل تلقائياً.
+       ========================================================================= */
+    const FIREBASE_CONFIG = {
+      apiKey: "YOUR_FIREBASE_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    let fbAuth = null;
+    let fbDb = null;
+    const isFirebaseConfigured = FIREBASE_CONFIG.apiKey && !FIREBASE_CONFIG.apiKey.startsWith("YOUR_");
+
+    if (isFirebaseConfigured && window.firebase) {
+      try {
+        firebase.initializeApp(FIREBASE_CONFIG);
+        fbAuth = firebase.auth();
+        fbDb = firebase.firestore();
+      } catch (e) {
+        console.warn("Firebase init skipped:", e);
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /* =========================================================================
+       2. نظام الحظر الصارم لكل ما هو خارج إطار الدين الإسلامي
+       ========================================================================= */
+    const BLOCKED_PATTERNS = [
+      /(?:https?:\/\/|www\.|t\.me\/|wa\.me\/|instagram\.com|tiktok\.com|snapchat\.com)/i,
+      /(?:أغاني|اغاني|موسيقى|مطرب|طرب|رقص|فيلم|مسلسل|سينما|تيك توك|ببجي|فورتنايت|لعبة|كازينو|مراهنات|قمار|كورة|مباراة|دوري|ريال مدريد|برشلونة)/i,
+      /(?:حب وغرام|عشق وغرام|تعال خاص|تعارف|بيع وشراء|إعلان ممول|خصم|تخفيضات|عملات رقمية|فوركس|تداول)/i,
+      /(?:شتم|قذف|فحش|إباحي|سافل|وقح)/i
+    ];
+    const RELIGIOUS_HINTS = /(?:الله|رب|قرآن|آية|سورة|حديث|رواية|دعاء|زيارة|نبي|رسول|محمد|علي|فاطمة|حسن|حسين|زينب|عباس|مهدي|صادق|باقر|كاظم|رضا|سجاد|صلاة|صوم|زكاة|خمس|حج|فقه|عقيدة|توحيد|منطق|نحو|حوزة|علم|إيمان|تقوى|أخلاق|جنة|توبة|استغفار|تسبيح|كربلاء|نجف|كاظمية|سامراء|مشهد|بقيع|سلام|رحمة|حلال|حرام|واجب|مستحب|كتاب|درس|مؤمن|إسلام|شيعة|أهل البيت)/;
+
+    function moderateReligiousText(text) {
+      const clean = (text || "").trim();
+      if (clean.length < 3) {
+        return { allowed: false, reason: "النص قصير جداً." };
+      }
+      for (const pat of BLOCKED_PATTERNS) {
+        if (pat.test(clean)) {
+          return {
+            allowed: false,
+            reason: "محتوى محظور: يُمنع نشر الروابط أو المواضيع الترفيهية والتجارية أو أي كلام خارج إطار الدين والأخلاق."
+          };
+        }
+      }
+      if (!RELIGIOUS_HINTS.test(clean)) {
+        return {
+          allowed: false,
+          reason: "محتوى محظور: يُسمح فقط بالنشر ضمن الإطار الديني الإسلامي أو العلمي الحوزوي والأخلاقي."
+        };
+      }
+      return { allowed: true, reason: "" };
+    }
+
+    /* =========================================================================
+       3. حالة التطبيق والبيانات
+       ========================================================================= */
+    const state = {
+      section: 'home',
+      isDark: localStorage.getItem('husayni_theme') === 'dark',
+      tasbihCount: Number(localStorage.getItem('husayni_tasbih_daily') || 0),
+      tasbihTarget: 34,
+      tasbihStep: 0,
+      cityIndex: 0,
+      surahId: 1,
+      quranFilter: 'all',
+      surahsList: [],
+      surahAyahs: [],
+      reciter: 'Parhizgar_48kbps',
+      playingAyahIdx: -1,
+      isPlayingSurah: false,
+      user: JSON.parse(localStorage.getItem('husayni_demo_user') || 'null'),
+      stories: JSON.parse(localStorage.getItem('husayni_stories') || '[]'),
+      topics: JSON.parse(localStorage.getItem('husayni_topics') || '[]'),
+      profiles: JSON.parse(localStorage.getItem('husayni_profiles') || '[]'),
+      follows: JSON.parse(localStorage.getItem('husayni_follows') || '[]'),
+      activeQuizIdx: 0,
+      quizScore: 0
+    };
+
+    if (state.isDark) document.documentElement.classList.add('dark');
+
+    // بيانات ابتدائية عامة للعرض في حال لم يُربط مشروع Firebase خاص بعد
+    if (state.profiles.length === 0) {
+      state.profiles = [
+        { userId: 'u1', displayName: 'السيد علي الموسوي', studyStage: 'طالب سطوح', city: 'النجف الأشرف', bio: 'مهتم بمباحث الفقه الاستدلالي وأصول المظفر والحلقات.' },
+        { userId: 'u2', displayName: 'الشيخ حسن العاملي', studyStage: 'أستاذ وباحث', city: 'كربلاء المقدسة', bio: 'باحث في التفسير الموضوعي وسيرة أهل البيت (عليهم السلام).' },
+        { userId: 'u3', displayName: 'زينب الكاظمي', studyStage: 'قارئ ومحب', city: 'بغداد - الكاظمية', bio: 'مواظبة على تلاوة القرآن والأدعية المأثورة في الصحيفة السجادية.' }
+      ];
+      localStorage.setItem('husayni_profiles', JSON.stringify(state.profiles));
+    }
+    if (state.stories.length === 0) {
+      state.stories = [
+        { id: 'st1', authorId: 'u1', authorName: 'السيد علي الموسوي', category: 'آية وتأمل', caption: '﴿أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ﴾ — كلما ضاقت بك الدنيا فافزع إلى ذكر الله ومناجاته.', reference: 'سورة الرعد · آية ٢٨', theme: 'emerald' },
+        { id: 'st2', authorId: 'u2', authorName: 'الشيخ حسن العاملي', category: 'حديث مأثور', caption: 'قال الإمام الصادق (عليه السلام): «كُونُوا لَنَا زَيْناً وَلَا تَكُونُوا عَلَيْنَا شَيْناً».', reference: 'الأمالي للصدوق', theme: 'amber' }
+      ];
+      localStorage.setItem('husayni_stories', JSON.stringify(state.stories));
+    }
+    if (state.topics.length === 0) {
+      state.topics = [
+        { id: 'tp1', title: 'منهجية دراسة المنطق للمبتدئين في الحوزة', body: 'ما هي أفضل طريقة لضبط أبواب التصورات والتصديقات في كتاب منطق المظفر قبل الانتقال إلى السطوح؟', category: 'منطق ونحو', authorId: 'u1', authorName: 'السيد علي الموسوي', replies: [{ authorName: 'الشيخ حسن العاملي', body: 'يُستحسن تلخيص الكليات الخمس والقضايا مع حل تمارين نهاية كل فصل ومباحثة زميل في الدرس.' }] }
+      ];
+      localStorage.setItem('husayni_topics', JSON.stringify(state.topics));
+    }
+
+    const SECTIONS = [
+      { id: 'home', label: 'الرئيسية' },
+      { id: 'duas', label: 'الأدعية والأحاديث' },
+      { id: 'quran', label: 'القرآن (١١٤ سورة)' },
+      { id: 'places', label: 'الأماكن الدينية' },
+      { id: 'figures', label: 'الصحابة والعلماء' },
+      { id: 'library', label: 'الكتب الكاملة' },
+      { id: 'forum', label: 'ساحة المناقشة' },
+      { id: 'profile', label: 'الملف والمتابعة' },
+      { id: 'prayers', label: 'الصلوات والأذان' },
+      { id: 'tasbih', label: 'التسبيحات' },
+      { id: 'nawafil', label: 'النوافل' },
+      { id: 'lessons', label: 'الدروس' },
+      { id: 'qa', label: 'أسئلة وأجوبة' },
+      { id: 'quiz', label: 'المسابقات' }
+    ];
+
+    const DUAS = [
+      { title: 'دعاء الفرج (الإمام المهدي عج)', source: 'مفاتيح الجنان', text: 'اللَّهُمَّ كُنْ لِوَلِيِّكَ الْحُجَّةِ بْنِ الْحَسَنِ، صَلَوَاتُكَ عَلَيْهِ وَعَلَى آبَائِهِ، فِي هَذِهِ السَّاعَةِ وَفِي كُلِّ سَاعَةٍ، وَلِيّاً وَحَافِظاً، وَقَائِداً وَنَاصِراً، وَدَلِيلاً وَعَيْناً، حَتَّى تُسْكِنَهُ أَرْضَكَ طَوْعاً، وَتُمَتِّعَهُ فِيهَا طَوِيلاً.' },
+      { title: 'مقطع من زيارة عاشوراء', source: 'كامل الزيارات ومفاتيح الجنان', text: 'السَّلَامُ عَلَيْكَ يَا أَبَا عَبْدِ اللَّهِ، السَّلَامُ عَلَيْكَ يَا ابْنَ رَسُولِ اللَّهِ، السَّلَامُ عَلَيْكَ يَا خِيَرَةَ اللَّهِ وَابْنَ خِيَرَتِهِ، السَّلَامُ عَلَيْكَ يَا ثَارَ اللَّهِ وَابْنَ ثَارِهِ وَالْوِتْرَ الْمَوْتُورَ.' },
+      { title: 'مطلع دعاء كميل بن زياد', source: 'مفاتيح الجنان', text: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ بِرَحْمَتِكَ الَّتِي وَسِعَتْ كُلَّ شَيْءٍ، وَبِقُوَّتِكَ الَّتِي قَهَرْتَ بِهَا كُلَّ شَيْءٍ، وَخَضَعَ لَهَا كُلُّ شَيْءٍ، وَذَلَّ لَهَا كُلُّ شَيْءٍ... اللَّهُمَّ اغْفِرْ لِيَ الذُّنُوبَ الَّتِي تَهْتِكُ الْعِصَمَ، اللَّهُمَّ اغْفِرْ لِيَ الذُّنُوبَ الَّتِي تُنْزِلُ النِّقَمَ.' },
+      { title: 'مقطع من دعاء التوسل', source: 'بحار الأنوار · المجلسي', text: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ وَأَتَوَجَّهُ إِلَيْكَ بِنَبِيِّكَ نَبِيِّ الرَّحْمَةِ مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَآلِهِ، يَا أَبَا الْقَاسِمِ يَا رَسُولَ اللَّهِ يَا إِمَامَ الرَّحْمَةِ يَا سَيِّدَنَا وَمَوْلَانَا إِنَّا تَوَجَّهْنَا وَاسْتَشْفَعْنَا وَتَوَسَّلْنَا بِكَ إِلَى اللَّهِ.' }
+    ];
+
+    const HADITHS = [
+      { title: 'حديث الثقلين المتواتر', source: 'الكافي وصحاح الفريقين', text: 'قَالَ رَسُولُ اللَّهِ (صَلَّى اللَّهُ عَلَيْهِ وَآلِهِ): «إِنِّي تَارِكٌ فِيكُمُ الثَّقَلَيْنِ: كِتَابَ اللَّهِ وَعِتْرَتِي أَهْلَ بَيْتِي، مَا إِنْ تَمَسَّكْتُمْ بِهِمَا لَنْ تَضِلُّوا بَعْدِي أَبَداً، وَإِنَّهُمَا لَنْ يَفْتَرِقَا حَتَّى يَرِدَا عَلَيَّ الْحَوْضَ».' },
+      { title: 'الأخلاق والعلم في مدرسة الصادق (ع)', source: 'أصول الكافي · ج ٢', text: 'عَنْ أَبِي عَبْدِ اللَّهِ الصَّادِقِ (عَلَيْهِ السَّلَامُ) قَالَ: «كُونُوا دُعَاةً لِلنَّاسِ بِغَيْرِ أَلْسِنَتِكُمْ، لِيَرَوْا مِنْكُمُ الْوَرَعَ وَالِاجْتِهَادَ وَالصَّلَاةَ وَالْخَيْرَ، فَإِنَّ ذَلِكَ دَاعِيَةٌ».' },
+      { title: 'غاية النهضة الحسينية', source: 'الإرشاد للشيخ المفيد', text: 'قَالَ الْإِمَامُ الْحُسَيْنُ (عَلَيْهِ السَّلَامُ): «إِنِّي لَمْ أَخْرُجْ أَشِراً وَلَا بَطِراً وَلَا مُفْسِداً وَلَا ظَالِماً، وَإِنَّمَا خَرَجْتُ لِطَلَبِ الْإِصْلَاحِ فِي أُمَّةِ جَدِّي، أُرِيدُ أَنْ آمُرَ بِالْمَعْرُوفِ وَأَنْهَى عَنِ الْمُنْكَرِ».' }
+    ];
+
+    const PLACES = [
+      { name: 'العتبة الحسينية والعباسية المقدسة', city: 'كربلاء المقدسة · العراق', desc: 'مرقد سيد الشهداء الإمام الحسين بن علي وأخيه أبي الفضل العباس (عليهما السلام) وشهداء واقعة الطف عام ٦١ هـ.' },
+      { name: 'العتبة العلوية المقدسة', city: 'النجف الأشرف · العراق', desc: 'مرقد أمير المؤمنين ووصي رسول الله علي بن أبي طالب (عليه السلام)، ومركز الحوزة العلمية الكبرى منذ ألف عام.' },
+      { name: 'العتبة الكاظمية المقدسة', city: 'بغداد · العراق', desc: 'مقابر قريش حيث يرقد الإمامان موسى بن جعفر الكاظم ومحمد بن علي الجواد (عليهما السلام).' },
+      { name: 'العتبة العسكرية المقدسة', city: 'سامراء · العراق', desc: 'مرقد الإمامين علي الهادي والحسن العسكري (عليهما السلام) وسرداب الغيبة المقدس.' },
+      { name: 'العتبة الرضوية المقدسة', city: 'مشهد · إيران', desc: 'حرم الإمام الثامن علي بن موسى الرضا (عليه السلام) وشمس الشموس وأنيس النفوس.' },
+      { name: 'حرم السيدة فاطمة المعصومة ومسجد الكوفة', city: 'قم المقدسة والكوفة', desc: 'مراقد ومقامات العلم والعبادة ومنها مسجد الكوفة المعظم ومسجد السهلة.' }
+    ];
+
+    const FIGURES = [
+      { name: 'سلمان المحمدي (الفارسي)', role: 'من كبار الصحابة المنتجبين', bio: 'أدرك الحقيقة بعد رحلة بحث طويلة، وقال عنه النبي: سلمان منا أهل البيت، وكان والياً زاهداً على المدائن.' },
+      { name: 'أبو ذر الغفاري (جندب بن جنادة)', role: 'صاحب الصدق والزهد', bio: 'خامس من أسلم، صدع بالحق في وجه الظلم والكنز بالباطل ونُفي إلى الربذة ثابتاً على ولايته.' },
+      { name: 'عمار بن ياسر والمقداد بن الأسود', role: 'من الأركان الأربعة', bio: 'صحابيان جليلان ثبتا مع أمير المؤمنين (عليه السلام)، واستشهد عمار في صفين كما أخبر النبي (ص).' },
+      { name: 'الشيخ المفيد والمرتضى والطوسي', role: 'أعلام الفقه والكلام والحديث', bio: 'أسسوا مدرسة النجف الأشرف وأصول الفقه الاستدلالي وجمعوا التهذيب والاستبصار.' },
+      { name: 'العلامة الحلي والسيد الطباطبائي والشهيد الصدر', role: 'مجددو الفكر الإسلامي', bio: 'أثروا المكتبة الإسلامية بالميزان في التفسير وبداية الحكمة والحلقات والباب الحادي عشر.' }
+    ];
+
+    const BOOKS = [
+      { title: 'نهج البلاغة', author: 'الشريف الرضي (من كلام أمير المؤمنين ع)', stage: 'الأخلاق والحكم', fullText: 'من خطبة المتقين: «أَمَّا بَعْدُ، فَإِنَّ اللَّهَ سُبْحَانَهُ وَتَعَالَى خَلَقَ الْخَلْقَ حِينَ خَلَقَهُمْ غَنِيّاً عَنْ طَاعَتِهِمْ آمِناً مِنْ مَعْصِيَتِهِمْ... فَالْمُتَّقُونَ فِيهَا هُمْ أَهْلُ الْفَضَائِلِ؛ مَنْطِقُهُمُ الصَّوَابُ، وَمَلْبَسُهُمُ الْاِقْتِصَادُ، وَمَشْيُهُمُ التَّوَاضُعُ».\n\nمن عهده لمالك الأشتر: «وَأَشْعِرْ قَلْبَكَ الرَّحْمَةَ لِلرَّعِيَّةِ، وَالْمَحَبَّةَ لَهُمْ، وَاللُّطْفَ بِهِمْ... فَإِنَّهُمْ صِنْفَانِ: إِمَّا أَخٌ لَكَ فِي الدِّينِ، وَإِمَّا نَظِيرٌ لَكَ فِي الْخَلْقِ».' },
+      { title: 'الصحيفة السجادية ورسالة الحقوق', author: 'الإمام علي بن الحسين السجاد (ع)', stage: 'الأدعية والتربية', fullText: 'من دعاء مكارم الأخلاق: «اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَآلِهِ، وَبَلِّغْ بِإِيمَانِي أَكْمَلَ الْإِيمَانِ، وَاجْعَلْ يَقِينِي أَفْضَلَ الْيَقِينِ، وَانْتَهِ بِنِيَّتِي إِلَى أَحْسَنِ النِّيَّاتِ، وَبِعَمَلِي إِلَى أَحْسَنِ الْأَعْمَالِ».\n\nمن رسالة الحقوق: «فَأَمَّا حَقُّ اللَّهِ الْأَكْبَرُ فَأَنْ تَعْبُدَهُ وَلَا تُشْرِكَ بِهِ شَيْئاً، وَأَمَّا حَقُّ نَفْسِكَ فَأَنْ تَسْتَوْفِيَهَا فِي طَاعَةِ اللَّهِ، وَأَمَّا حَقُّ الْأُمِّ فَأَنْ تَعْلَمَ أَنَّهَا حَمَلَتْكَ حَيْثُ لَا يَحْمِلُ أَحَدٌ أَحَداً».' },
+      { title: 'منطق المظفر', author: 'الشيخ محمد رضا المظفر', stage: 'المقدمات الحوزوية', fullText: 'تعريف المنطق: «آلة قانونية تعصم مراعاتها الذهن عن الخطأ في الفكر». وينقسم العلم إلى: تصوّر (إدراك مجرد عن الحكم) وتصديق (إدراك مصحوب بالحكم).\n\nالكليات الخمس: النوع، الجنس، الفصل، الخاصة، والعرض العام. والقياس الاقتراني يتألف من صغرى موجبة وكبرى كلية في الشكل الأول.' },
+      { title: 'عقائد الإمامية', author: 'الشيخ محمد رضا المظفر', stage: 'المقدمات العقائدية', fullText: 'أصول الدين خمسة: التوحيد، العدل، النبوة، الإمامة، والمعاد. ولا يجوز فيها التقليد بل لا بد من البصيرة والدليل، أما الفروع الفقهية ففيها الاجتهاد أو الاحتياط أو تقليد الأعلم الجامع للشرائط. وأفعال العباد ليست جبراً محضاً ولا تفويضاً بل أمر بين أمرين.' },
+      { title: 'قطر الندى وبلّ الصدى', author: 'ابن هشام الأنصاري', stage: 'النحو العربي', fullText: 'الكلمة قولٌ مفرد: اسم (يُعرف بالجر والتنوين والنداء وأل والإسناد)، وفعل (ماضٍ ومضارع وأمر)، وحرف (لا يقبل علامات الاسم ولا الفعل). والإعراب أربعة: رفع ونصب وجر وجزم.' },
+      { title: 'الكافي (أصول الكافي)', author: 'ثقة الإسلام الشيخ الكليني', stage: 'الحديث الشريف', fullText: 'عن الإمام الباقر (ع): «لَمَّا خَلَقَ اللَّهُ الْعَقْلَ اسْتَنْطَقَهُ، ثُمَّ قَالَ: وَعِزَّتِي وَجَلَالِي مَا خَلَقْتُ خَلْقاً هُوَ أَحَبُّ إِلَيَّ مِنْكَ». وعن الصادق (ع): «طَلَبُ الْعِلْمِ فَرِيضَةٌ» و«الْمُؤْمِنُ أَخُو الْمُؤْمِنِ كَالْجَسَدِ الْوَاحِدِ».' }
+    ];
+
+    const LESSONS = [
+      { cat: 'فقه', title: 'أحكام الطهارة والمياه والوضوء', body: 'الماء المطلق طاهر ومطهّر، وماء الكرّ قرابة ٣٨٤ لتراً لا ينجس بملاقاة النجاسة إلا بالتغير. وواجبات الوضوء: النية، غسل الوجه، غسل اليدين من المرفقين، مسح مقدم الرأس، ومسح ظاهر القدمين.' },
+      { cat: 'عقيدة', title: 'التوحيد الذاتي والصفاتي والعدل الإلهي', body: 'الله تعالى واحد أحد صفاته عين ذاته، وهو عادل حكيم لا يظلم مثقال ذرة، والأفعال الاختيارية للعباد قائمة على قاعدة «لا جبر ولا تفويض بل أمر بين أمرين».' },
+      { cat: 'منطق', title: 'التصور والتصديق والكليات الخمس', body: 'التصور هو حضور صورة الشيء في الذهن دون حكم، والتصديق هو الإذعان والاعتقاد بنسبة الخبر. والكليات الخمس هي الأساس في صياغة الحدود والرسوم.' },
+      { cat: 'نحو', title: 'الجملة الاسمية والفعلية والنواسخ', body: 'تتكون الجملة الاسمية من مبتدأ وخبر مرفوعين؛ تدخل «كان» فترفع الاسم وتنصب الخبر، وتدخل «إنّ» فتنصب الاسم وترفع الخبر.' }
+    ];
+
+    const QA_LIST = [
+      { q: 'ما هو عدد ركعات الفرائض والنوافل اليومية؟', a: 'الفرائض ١٧ ركعة، والنوافل ٣٤ ركعة (٨ للظهر، ٨ للعصر، ٤ للمغرب، ٢ من جلوس للعشاء وتُحسب ركعة، ١١ صلاة الليل، ٢ نافلة الفجر)، والمجموع ٥١ ركعة.' },
+      { q: 'ما معنى التسبيحة الكبرى (تسبيحة الزهراء ع)؟', a: 'تتكون من ٣٤ مرة «الله أكبر»، ثم ٣٣ مرة «الحمد لله»، ثم ٣٣ مرة «سبحان الله»، وتُقرأ بعد كل صلاة وعند النوم.' },
+      { q: 'هل يجوز التيمم مع وجود الماء؟', a: 'لا يجوز التيمم إلا عند فقدان الماء أو العجز عن استعماله لمرض أو ضيق وقت أو حرج شديد.' }
+    ];
+
+    const QUIZ = [
+      { q: 'ما عدد جميع سور القرآن الكريم؟', opts: ['١١٠ سورة', '١١٤ سورة', '١٢٠ سورة'], ans: 1 },
+      { q: 'كم ركعة نافلة صلاة الليل (مع الشفع والوتر)؟', opts: ['٨ ركعات', '١١ ركعة', '١٣ ركعة'], ans: 1 },
+      { q: 'مؤلف كتاب «الصحيفة السجادية» هو الإمام:', opts: ['علي بن الحسين زين العابدين (ع)', 'محمد الباقر (ع)', 'موسى الكاظم (ع)'], ans: 0 },
+      { q: 'ما القاعدة العقائدية في أفعال العباد عند أهل البيت (ع)؟', opts: ['الجبر المحض', 'التفويض المطلق', 'أمر بين أمرين'], ans: 2 }
+    ];
+
+    const CITIES = [
+      { name: 'كربلاء المقدسة', fajr: '04:58', dhuhr: '12:04', maghrib: '17:28', isha: '18:34' },
+      { name: 'النجف الأشرف', fajr: '04:59', dhuhr: '12:05', maghrib: '17:29', isha: '18:35' },
+      { name: 'بغداد', fajr: '04:56', dhuhr: '12:02', maghrib: '17:26', isha: '18:32' },
+      { name: 'مشهد المقدسة', fajr: '04:22', dhuhr: '11:30', maghrib: '16:54', isha: '18:01' }
+    ];
+
+    /* =========================================================================
+       4. دوال العرض والتنقل
+       ========================================================================= */
+    function renderRibbon() {
+      const el = document.getElementById('subRibbon');
+      el.innerHTML = SECTIONS.map(s => `
+        <button type="button" onclick="navigate('${s.id}')" class="min-h-[40px] px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 cursor-pointer transition-colors ${
+          state.section === s.id
+            ? 'bg-[#0F5132] text-white dark:bg-emerald-600'
+            : 'text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-slate-800'
+        }">${s.label}</button>
+      `).join('');
+    }
+
+    function navigate(sec) {
+      state.section = sec;
+      renderRibbon();
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleTheme() {
+      state.isDark = !state.isDark;
+      document.documentElement.classList.toggle('dark', state.isDark);
+      localStorage.setItem('husayni_theme', state.isDark ? 'dark' : 'light');
+    }
+
+    function openModal(html) {
+      document.getElementById('modalCard').innerHTML = html;
+      document.getElementById('modalOverlay').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.add('hidden');
+    }
+
+    function renderStoriesWidget() {
+      return `
+        <section class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-4 space-y-3 mb-6">
+          <div class="flex items-center justify-between gap-2">
+            <h2 class="text-sm font-bold">الستوريات الدينية اليومية · بإشراف شرعي</h2>
+            <button type="button" onclick="openAddStoryModal()" class="min-h-[38px] px-3.5 py-1.5 rounded-xl bg-[#0F5132] text-white text-xs font-semibold cursor-pointer">+ إضافة ستوري</button>
+          </div>
+          <div class="flex items-start gap-4 overflow-x-auto pb-1 no-scrollbar">
+            ${state.stories.map((st, idx) => `
+              <button type="button" onclick="viewStory(${idx})" class="flex flex-col items-center gap-1.5 shrink-0 w-20 cursor-pointer">
+                <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#0F5132] to-[#082E1C] text-white flex items-center justify-center font-amiri text-xl font-bold ring-2 ring-emerald-600 ring-offset-2">${escapeHtml(st.authorName.charAt(0))}</div>
+                <span class="text-[11px] font-semibold truncate max-w-full">${escapeHtml(st.authorName)}</span>
+              </button>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function viewStory(idx) {
+      const st = state.stories[idx];
+      if (!st) return;
+      openModal(`
+        <div class="bg-gradient-to-br from-[#0F5132] to-[#082E1C] text-white rounded-2xl p-6 md:p-8 space-y-5 text-center">
+          <div class="flex items-center justify-between text-xs text-emerald-200">
+            <span>${escapeHtml(st.authorName)} · ${escapeHtml(st.category)}</span>
+            <button type="button" onclick="closeModal()" class="px-3 py-1 rounded-lg bg-white/15 cursor-pointer">إغلاق</button>
+          </div>
+          <p class="font-amiri text-2xl md:text-3xl leading-[1.9]">${escapeHtml(st.caption)}</p>
+          ${st.reference ? `<p class="text-xs text-amber-300">المصدر: ${escapeHtml(st.reference)}</p>` : ''}
+        </div>
+      `);
+    }
+
+    function openAddStoryModal() {
+      openModal(`
+        <form onsubmit="submitStory(event)" class="space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-[#E7E1D6] dark:border-[#1F2B37]">
+            <h3 class="font-amiri text-2xl font-bold">إضافة ستوري ديني</h3>
+            <button type="button" onclick="closeModal()" class="px-3 py-1 rounded-lg border cursor-pointer">إغلاق</button>
+          </div>
+          <p id="storyError" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 p-3 rounded-xl"></p>
+          <input id="storyCategory" type="hidden" value="آية وتأمل" />
+          <select onchange="document.getElementById('storyCategory').value=this.value" class="w-full min-h-[44px] px-3 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm">
+            <option value="آية وتأمل">آية وتأمل</option>
+            <option value="حديث مأثور">حديث مأثور</option>
+            <option value="دعاء وذكر">دعاء وذكر</option>
+            <option value="فائدة حوزوية">فائدة حوزوية</option>
+          </select>
+          <textarea id="storyCaption" required rows="4" placeholder="اكتب آية أو حديثاً أو دعاءً (يُحظر أي محتوى خارج إطار الدين)..." class="w-full p-3.5 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm"></textarea>
+          <input id="storyRef" type="text" placeholder="المصدر (اختياري)" class="w-full min-h-[44px] px-3.5 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm" />
+          <button type="submit" class="w-full min-h-[44px] rounded-xl bg-[#0F5132] text-white text-sm font-semibold cursor-pointer">نشر الستوري</button>
+        </form>
+      `);
+    }
+
+    function submitStory(e) {
+      e.preventDefault();
+      const cap = document.getElementById('storyCaption').value.trim();
+      const ref = document.getElementById('storyRef').value.trim();
+      const cat = document.getElementById('storyCategory').value;
+      const check = moderateReligiousText(cap + ' ' + ref);
+      if (!check.allowed) {
+        const errEl = document.getElementById('storyError');
+        errEl.textContent = check.reason;
+        errEl.classList.remove('hidden');
+        return;
+      }
+      const authorName = state.user?.displayName || 'قارئ كريم';
+      const newStory = { id: 'st_' + Date.now(), authorId: state.user?.uid || 'guest', authorName, category: cat, caption: cap, reference: ref, theme: 'emerald' };
+      state.stories.unshift(newStory);
+      localStorage.setItem('husayni_stories', JSON.stringify(state.stories));
+      if (fbDb && fbAuth?.currentUser) {
+        fbDb.collection('stories').doc(newStory.id).set({
+          ...newStory,
+          authorId: fbAuth.currentUser.uid,
+          themeColor: 'emerald',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          expiresAt: firebase.firestore.Timestamp.fromMillis(Date.now() + 86400000)
+        }).catch(() => {});
+      }
+      closeModal();
+      render();
+    }
+
+    async function loadQuranSurah(id) {
+      state.surahId = id;
+      render();
+      try {
+        const r = await fetch(`https://api.alquran.cloud/v1/surah/${id}/editions/quran-uthmani,ar.muyassar`);
+        const j = await r.json();
+        const u = j.data[0].ayahs;
+        const t = j.data[1].ayahs;
+        state.surahAyahs = u.map((a, i) => ({ number: a.numberInSurah, text: a.text, tafsir: t[i]?.text || '' }));
+        render();
+      } catch {
+        state.surahAyahs = [{ number: 1, text: 'تعذر التحميل من الإنترنت، تحقق من الاتصال.', tafsir: '' }];
+        render();
+      }
+    }
+
+    function openAyahModal(idx) {
+      const a = state.surahAyahs[idx];
+      if (!a) return;
+      openModal(`
+        <div class="space-y-5">
+          <div class="flex items-center justify-between border-b pb-3">
+            <span class="text-xs font-bold text-[#0F5132]">سورة رقم ${state.surahId} · الآية ${a.number}</span>
+            <button type="button" onclick="closeModal()" class="px-3 py-1 rounded-lg border cursor-pointer">إغلاق</button>
+          </div>
+          <div class="rounded-2xl bg-[#FAF8F4] dark:bg-[#0B1117] p-6 text-center">
+            <p class="font-amiri text-3xl leading-[2.3]">﴿${a.text}﴾</p>
+          </div>
+          <p class="text-sm leading-relaxed text-stone-700 dark:text-stone-300">${a.tafsir}</p>
+          <div class="flex gap-2">
+            <button type="button" onclick="playSingleAyah(${state.surahId}, ${a.number})" class="min-h-[44px] px-4 py-2 rounded-xl bg-[#0F5132] text-white text-xs font-semibold cursor-pointer">استماع بصوت القارئ المختار</button>
+          </div>
+        </div>
+      `);
+    }
+
+    const quranAudio = new Audio();
+    quranAudio.onended = () => {
+      if (state.isPlayingSurah && state.playingAyahIdx + 1 < state.surahAyahs.length) {
+        state.playingAyahIdx++;
+        const nextAyah = state.surahAyahs[state.playingAyahIdx];
+        playSingleAyah(state.surahId, nextAyah.number, true);
+        render();
+      } else {
+        state.isPlayingSurah = false;
+        state.playingAyahIdx = -1;
+        render();
+      }
+    };
+
+    function playSingleAyah(sId, aNum, keepSeq = false) {
+      if (!keepSeq) state.isPlayingSurah = false;
+      const idx = state.surahAyahs.findIndex(x => x.number === aNum);
+      if (idx >= 0) state.playingAyahIdx = idx;
+      const url = `https://everyayah.com/data/${state.reciter}/${String(sId).padStart(3,'0')}${String(aNum).padStart(3,'0')}.mp3`;
+      quranAudio.src = url;
+      quranAudio.play().catch(() => {});
+    }
+
+    function playSurahSequential() {
+      if (!state.surahAyahs.length) return;
+      state.isPlayingSurah = true;
+      state.playingAyahIdx = 0;
+      playSingleAyah(state.surahId, state.surahAyahs[0].number, true);
+      render();
+    }
+
+    function stopQuranAudio() {
+      quranAudio.pause();
+      state.isPlayingSurah = false;
+      state.playingAyahIdx = -1;
+      render();
+    }
+
+    function playAdhan() {
+      const synth = window.speechSynthesis;
+      if (!synth) return;
+      synth.cancel();
+      const u = new SpeechSynthesisUtterance('اللَّهُ أَكْبَرُ، أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ، أَشْهَدُ أَنَّ مُحَمَّداً رَسُولُ اللَّهِ، أَشْهَدُ أَنَّ عَلِيّاً وَلِيُّ اللَّهِ، حَيَّ عَلَى الصَّلَاةِ، حَيَّ عَلَى الْفَلَاحِ، حَيَّ عَلَى خَيْرِ الْعَمَلِ');
+      u.lang = 'ar-SA';
+      u.rate = 0.85;
+      synth.speak(u);
+    }
+
+    async function render() {
+      const main = document.getElementById('appMain');
+
+      if (state.section === 'home') {
+        const cards = SECTIONS.filter(s => s.id !== 'home').map(s => `
+          <button type="button" onclick="navigate('${s.id}')" class="text-right rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-5 hover:border-[#0F5132] transition-all cursor-pointer flex flex-col justify-between min-h-[120px]">
+            <h3 class="text-base font-bold text-stone-900 dark:text-white">${s.label}</h3>
+            <span class="text-xs font-semibold text-[#0F5132] dark:text-emerald-400">فتح النافذة ←</span>
+          </button>
+        `).join('');
+        main.innerHTML = `
+          ${renderStoriesWidget()}
+          <section class="rounded-2xl bg-[#0F5132] text-white p-6 md:p-10 mb-8 space-y-3">
+            <p class="text-xs text-amber-300">النسخة العامة المفتوحة · علوم أهل البيت (عليهم السلام)</p>
+            <h1 class="font-amiri text-3xl md:text-4xl font-bold">المدونة الحسينية للعبادة والعلم والمعرفة</h1>
+            <p class="text-sm text-emerald-100 max-w-2xl">القرآن الكريم كاملاً (١١٤ سورة) بأصوات شيعية، الأدعية والأحاديث الصحيحة، العتبات المقدسة، سير الصحابة والعلماء، الكتب الحوزوية الكاملة، الستوري، وساحة المناقشة.</p>
+          </section>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">${cards}</div>
+        `;
+      } else if (state.section === 'quran') {
+        if (state.surahsList.length === 0) {
+          fetch('https://api.alquran.cloud/v1/surah').then(r => r.json()).then(j => {
+            state.surahsList = j.data || [];
+            render();
+            if (state.surahAyahs.length === 0) loadQuranSurah(1);
+          }).catch(() => {});
+        }
+        const filteredSurahs = (state.surahsList.length ? state.surahsList : [{number:1,name:'سورة الفاتحة',numberOfAyahs:7}]).filter(s => {
+          if (state.quranFilter === 'tiwal') return s.number >= 2 && s.number <= 9;
+          if (state.quranFilter === 'miun') return s.number >= 10 && s.number <= 35;
+          if (state.quranFilter === 'mathani') return s.number >= 36 || s.number === 1;
+          return true;
+        });
+        main.innerHTML = `
+          <div class="space-y-5">
+            <div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <h1 class="font-amiri text-3xl font-bold">القرآن الكريم كاملاً (١١٤ سورة · أصوات شيعية)</h1>
+                ${state.isPlayingSurah
+                  ? `<button type="button" onclick="stopQuranAudio()" class="min-h-[42px] px-4 py-2 rounded-xl bg-rose-600 text-white text-xs font-semibold cursor-pointer">إيقاف التلاوة</button>`
+                  : `<button type="button" onclick="playSurahSequential()" class="min-h-[42px] px-4 py-2 rounded-xl bg-[#0F5132] text-white text-xs font-semibold cursor-pointer">تشغيل السورة متتابعة</button>`
+                }
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" onclick="state.reciter='Parhizgar_48kbps';render()" class="min-h-[40px] px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer ${state.reciter==='Parhizgar_48kbps'?'bg-[#0F5132] text-white':'border'}">الحاج شهريار برهيزكار (قارئ شيعي)</button>
+                <button type="button" onclick="state.reciter='Karim_Mansoori_40kbps';render()" class="min-h-[40px] px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer ${state.reciter==='Karim_Mansoori_40kbps'?'bg-[#0F5132] text-white':'border'}">الحاج كريم منصوري (قارئ شيعي)</button>
+                <button type="button" onclick="state.reciter='Abdul_Basit_Mujawwad_128kbps';render()" class="min-h-[40px] px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer ${state.reciter==='Abdul_Basit_Mujawwad_128kbps'?'bg-[#0F5132] text-white':'border'}">عبد الباسط (المجود)</button>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" onclick="state.quranFilter='all';render()" class="min-h-[36px] px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer ${state.quranFilter==='all'?'bg-amber-600 text-white':'border'}">الكل (١١٤)</button>
+                <button type="button" onclick="state.quranFilter='tiwal';render()" class="min-h-[36px] px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer ${state.quranFilter==='tiwal'?'bg-amber-600 text-white':'border'}">طوال السور</button>
+                <button type="button" onclick="state.quranFilter='miun';render()" class="min-h-[36px] px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer ${state.quranFilter==='miun'?'bg-amber-600 text-white':'border'}">المئون</button>
+                <button type="button" onclick="state.quranFilter='mathani';render()" class="min-h-[36px] px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer ${state.quranFilter==='mathani'?'bg-amber-600 text-white':'border'}">المثاني والمفصل</button>
+              </div>
+              <select onchange="loadQuranSurah(Number(this.value))" class="w-full md:w-96 min-h-[44px] px-3 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm">
+                ${filteredSurahs.map(s => `<option value="${s.number}" ${s.number===state.surahId?'selected':''}>${s.number}. ${s.name} (${s.numberOfAyahs} آية)</option>`).join('')}
+              </select>
+            </div>
+            <div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-3">
+              ${state.surahAyahs.length === 0 ? '<p class="text-sm text-stone-500">جارٍ تحميل السورة الكريمة بالتشكيل الكامل...</p>' : state.surahAyahs.map((a, i) => `
+                <button type="button" onclick="openAyahModal(${i})" class="w-full text-right p-4 rounded-xl transition-colors flex items-start justify-between gap-3 cursor-pointer ${state.playingAyahIdx===i ? 'bg-emerald-100/70 dark:bg-emerald-950/50 border border-[#0F5132]' : 'hover:bg-emerald-50/40 dark:hover:bg-emerald-950/20'}">
+                  <span class="font-amiri text-2xl leading-[2.1]">${a.text}</span>
+                  <span class="w-8 h-8 rounded-full border border-amber-600/40 flex items-center justify-center text-xs font-bold shrink-0">${a.number}</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (state.section === 'duas') {
+        main.innerHTML = `
+          <div class="space-y-6">
+            <h1 class="font-amiri text-3xl font-bold">الأدعية والأحاديث الموثقة</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${DUAS.map(d => `<div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-3"><p class="text-xs text-[#0F5132] font-semibold">${d.source}</p><h2 class="font-amiri text-2xl font-bold">${d.title}</h2><p class="font-amiri text-xl leading-[2]">${d.text}</p></div>`).join('')}
+              ${HADITHS.map(h => `<div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-3"><p class="text-xs text-amber-700 font-semibold">حديث شريف · ${h.source}</p><h2 class="font-amiri text-2xl font-bold">${h.title}</h2><p class="font-amiri text-xl leading-[2]">${h.text}</p></div>`).join('')}
+            </div>
+          </div>
+        `;
+      } else if (state.section === 'places') {
+        main.innerHTML = `
+          <div class="space-y-6">
+            <h1 class="font-amiri text-3xl font-bold">الأماكن الدينية والعتبات المقدسة</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              ${PLACES.map(p => `<div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-2"><p class="text-xs font-semibold text-[#0F5132]">${p.city}</p><h2 class="font-amiri text-2xl font-bold">${p.name}</h2><p class="text-sm text-stone-600 dark:text-stone-300 leading-relaxed">${p.desc}</p></div>`).join('')}
+            </div>
+          </div>
+        `;
+      } else if (state.section === 'figures') {
+        main.innerHTML = `
+          <div class="space-y-6">
+            <h1 class="font-amiri text-3xl font-bold">الصحابة المنتجبون والعلماء الأعلام</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${FIGURES.map(f => `<div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-2"><p class="text-xs font-semibold text-[#0F5132]">${f.role}</p><h2 class="font-amiri text-2xl font-bold">${f.name}</h2><p class="text-sm text-stone-600 dark:text-stone-300 leading-relaxed">${f.bio}</p></div>`).join('')}
+            </div>
+          </div>
+        `;
+      } else if (state.section === 'library') {
+        main.innerHTML = `
+          <div class="space-y-6">
+            <h1 class="font-amiri text-3xl font-bold">المكتبة والكتب الحوزوية الكاملة</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${BOOKS.map((b, i) => `
+                <button type="button" onclick="openBookModal(${i})" class="text-right rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-2 hover:border-[#0F5132] cursor-pointer">
+                  <p class="text-xs font-semibold text-[#0F5132]">${b.stage} · ${b.author}</p>
+                  <h2 class="font-amiri text-2xl font-bold">${b.title}</h2>
+                  <p class="text-xs text-stone-500 line-clamp-2">${b.fullText}</p>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (state.section === 'forum') {
+        main.innerHTML = `
+          ${renderStoriesWidget()}
+          <div class="space-y-5">
+            <div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h1 class="font-amiri text-3xl font-bold">ساحة المناقشة الدينية والعلمية</h1>
+                <p class="text-xs text-stone-500">يُحظر تلقائياً نشر أي محتوى خارج إطار الدين الإسلامي</p>
+              </div>
+              <button type="button" onclick="openNewTopicModal()" class="min-h-[44px] px-4 py-2 rounded-xl bg-[#0F5132] text-white text-xs font-semibold cursor-pointer">+ طرح موضوع جديد</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${state.topics.map((t, i) => `
+                <div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-5 space-y-3">
+                  <p class="text-xs font-semibold text-[#0F5132]">${escapeHtml(t.category)} · ${escapeHtml(t.authorName)}</p>
+                  <h2 class="font-amiri text-xl font-bold">${escapeHtml(t.title)}</h2>
+                  <p class="text-sm text-stone-600 dark:text-stone-300">${escapeHtml(t.body)}</p>
+                  <button type="button" onclick="openTopicModal(${i})" class="text-xs font-semibold text-[#0F5132] cursor-pointer">عرض والرد (${(t.replies||[]).length}) ←</button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (state.section === 'profile') {
+        main.innerHTML = `
+          <div class="space-y-6">
+            <div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h1 class="font-amiri text-3xl font-bold">الملف الشخصي ومتابعة القراء والطلبة</h1>
+                <p class="text-xs text-stone-500">${state.user ? 'مرحباً: ' + escapeHtml(state.user.displayName) : 'وضع التصفح العام — أنشئ ملفك لمتابعة القراء'}</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                ${isFirebaseConfigured && fbAuth ? (
+                  fbAuth.currentUser
+                    ? `<button type="button" onclick="signOutFirebase()" class="min-h-[44px] px-4 py-2 rounded-xl border text-xs font-semibold cursor-pointer">تسجيل الخروج</button>`
+                    : `<button type="button" onclick="signInWithGoogle()" class="min-h-[44px] px-4 py-2 rounded-xl bg-amber-600 text-white text-xs font-semibold cursor-pointer">دخول بحساب Google (Firebase)</button>`
+                ) : ''}
+                <button type="button" onclick="openEditProfileModal()" class="min-h-[44px] px-4 py-2 rounded-xl bg-[#0F5132] text-white text-xs font-semibold cursor-pointer">تعديل / إنشاء ملفي</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              ${state.profiles.map(p => {
+                const isFollowed = state.follows.includes(p.userId);
+                return `
+                  <div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-5 space-y-3">
+                    <h2 class="font-bold text-base">${escapeHtml(p.displayName)}</h2>
+                    <p class="text-xs text-[#0F5132]">${escapeHtml(p.studyStage)} · ${escapeHtml(p.city)}</p>
+                    <p class="text-xs text-stone-600 dark:text-stone-300">${escapeHtml(p.bio)}</p>
+                    <button type="button" onclick="toggleFollow('${escapeHtml(p.userId)}')" class="w-full min-h-[40px] rounded-xl text-xs font-semibold cursor-pointer ${isFollowed ? 'bg-emerald-50 text-[#0F5132] border border-[#0F5132]/30' : 'bg-[#0F5132] text-white'}">
+                      ${isFollowed ? 'متابَع ✓ (إلغاء)' : 'متابعة'}
+                    </button>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      } else if (state.section === 'prayers') {
+        const c = CITIES[state.cityIndex];
+        main.innerHTML = `
+          <div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-5">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <h1 class="font-amiri text-3xl font-bold">مواقيت الصلاة والأذان الشيعي · ${c.name}</h1>
+              <button type="button" onclick="playAdhan()" class="min-h-[44px] px-5 py-2 rounded-xl bg-[#0F5132] text-white text-xs font-semibold cursor-pointer">تشغيل الأذان الشيعي</button>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              ${CITIES.map((ct, i) => `<button type="button" onclick="state.cityIndex=${i};render()" class="min-h-[40px] px-3.5 py-1.5 rounded-xl text-xs font-semibold cursor-pointer ${i===state.cityIndex?'bg-[#0F5132] text-white':'border'}">${ct.name}</button>`).join('')}
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+              <div class="p-4 rounded-xl bg-[#FAF8F4] dark:bg-[#0B1117]"><p class="text-xs text-stone-500">الفجر</p><p class="text-xl font-bold mt-1">${c.fajr}</p></div>
+              <div class="p-4 rounded-xl bg-[#FAF8F4] dark:bg-[#0B1117]"><p class="text-xs text-stone-500">الظهر</p><p class="text-xl font-bold mt-1">${c.dhuhr}</p></div>
+              <div class="p-4 rounded-xl bg-[#FAF8F4] dark:bg-[#0B1117]"><p class="text-xs text-stone-500">المغرب</p><p class="text-xl font-bold mt-1">${c.maghrib}</p></div>
+              <div class="p-4 rounded-xl bg-[#FAF8F4] dark:bg-[#0B1117]"><p class="text-xs text-stone-500">العشاء</p><p class="text-xl font-bold mt-1">${c.isha}</p></div>
+            </div>
+          </div>
+        `;
+      } else if (state.section === 'tasbih') {
+        const phases = [{ title: 'الله أكبر', max: 34 }, { title: 'الحمد لله', max: 33 }, { title: 'سبحان الله', max: 33 }];
+        const cur = phases[state.tasbihStep % 3];
+        main.innerHTML = `
+          <div class="max-w-md mx-auto rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-8 text-center space-y-6">
+            <h1 class="font-amiri text-3xl font-bold">تسبيحة الزهراء (ع)</h1>
+            <p class="font-amiri text-3xl font-bold text-[#0F5132]">${cur.title} (${cur.max})</p>
+            <button type="button" onclick="tapTasbih()" class="w-40 h-40 mx-auto rounded-full bg-[#0F5132] text-white text-4xl font-bold flex items-center justify-center cursor-pointer shadow-lg">${state.tasbihCount}</button>
+            <button type="button" onclick="state.tasbihCount=0;localStorage.setItem('husayni_tasbih_daily','0');render()" class="text-xs text-stone-500 underline cursor-pointer">تصفير العداد</button>
+          </div>
+        `;
+      } else if (state.section === 'nawafil') {
+        main.innerHTML = `
+          <div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-4">
+            <h1 class="font-amiri text-3xl font-bold">جدول النوافل اليومية (٣٤ ركعة نافلة + ١٧ فريضة = ٥١ ركعة)</h1>
+            <ul class="space-y-2 text-sm leading-relaxed">
+              <li>• نافلة الفجر: ركعتان قبل صلاة الفجر.</li>
+              <li>• نافلة الظهر: ٨ ركعات (ركعتان ركعتان) قبل صلاة الظهر.</li>
+              <li>• نافلة العصر: ٨ ركعات قبل صلاة العصر.</li>
+              <li>• نافلة المغرب: ٤ ركعات بعد صلاة المغرب.</li>
+              <li>• نافلة العشاء (الوتيرة): ركعتان من جلوس بعد صلاة العشاء.</li>
+              <li>• صلاة الليل: ١١ ركعة (٨ نافلة الليل + ٢ الشفع + ١ الوتر).</li>
+            </ul>
+          </div>
+        `;
+      } else if (state.section === 'lessons') {
+        main.innerHTML = `
+          <div class="space-y-4">
+            <h1 class="font-amiri text-3xl font-bold">دروس الفقه والعقيدة والمنطق والنحو</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${LESSONS.map(l => `<div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-2"><p class="text-xs font-semibold text-[#0F5132]">${l.cat}</p><h2 class="font-amiri text-2xl font-bold">${l.title}</h2><p class="text-sm leading-relaxed">${l.body}</p></div>`).join('')}
+            </div>
+          </div>
+        `;
+      } else if (state.section === 'qa') {
+        main.innerHTML = `
+          <div class="space-y-4">
+            <h1 class="font-amiri text-3xl font-bold">الأسئلة والأجوبة الفقهية والعقائدية</h1>
+            ${QA_LIST.map(item => `<div class="rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-2"><h2 class="font-bold text-base text-[#0F5132]">${item.q}</h2><p class="text-sm leading-relaxed">${item.a}</p></div>`).join('')}
+          </div>
+        `;
+      } else if (state.section === 'quiz') {
+        const q = QUIZ[state.activeQuizIdx];
+        main.innerHTML = `
+          <div class="max-w-xl mx-auto rounded-2xl border border-[#E7E1D6] dark:border-[#1F2B37] bg-white dark:bg-[#121A22] p-6 space-y-4">
+            <div class="flex justify-between text-xs font-bold text-[#0F5132]">
+              <span>السؤال ${state.activeQuizIdx + 1} من ${QUIZ.length}</span>
+              <span>النقاط: ${state.quizScore}</span>
+            </div>
+            <h1 class="font-amiri text-2xl font-bold">${q.q}</h1>
+            <div class="space-y-2">
+              ${q.opts.map((opt, idx) => `<button type="button" onclick="answerQuiz(${idx})" class="w-full text-right min-h-[44px] px-4 py-2 rounded-xl border hover:border-[#0F5132] text-sm cursor-pointer">${opt}</button>`).join('')}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function openBookModal(i) {
+      const b = BOOKS[i];
+      openModal(`
+        <div class="space-y-4">
+          <div class="flex items-start justify-between border-b pb-3">
+            <div><p class="text-xs font-semibold text-[#0F5132]">${b.stage} · ${b.author}</p><h2 class="font-amiri text-2xl font-bold">${b.title}</h2></div>
+            <button type="button" onclick="closeModal()" class="px-3 py-1 rounded-lg border cursor-pointer">إغلاق</button>
+          </div>
+          <p class="font-amiri text-xl leading-[2.1] whitespace-pre-wrap">${b.fullText}</p>
+        </div>
+      `);
+    }
+
+    function openNewTopicModal() {
+      openModal(`
+        <form onsubmit="submitTopic(event)" class="space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-[#E7E1D6] dark:border-[#1F2B37]">
+            <h3 class="font-amiri text-2xl font-bold">طرح موضوع في ساحة المناقشة</h3>
+            <button type="button" onclick="closeModal()" class="px-3 py-1 rounded-lg border cursor-pointer">إغلاق</button>
+          </div>
+          <p id="topicErr" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 p-3 rounded-xl"></p>
+          <select id="topCategory" class="w-full min-h-[44px] px-3 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm">
+            <option value="فقهية">فقهية</option>
+            <option value="عقائدية">عقائدية</option>
+            <option value="منطق ونحو">منطق ونحو</option>
+            <option value="قرآن وتفسير">قرآن وتفسير</option>
+          </select>
+          <input id="topTitle" required placeholder="عنوان البحث أو السؤال الديني..." class="w-full min-h-[44px] px-3.5 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm" />
+          <textarea id="topBody" required rows="4" placeholder="التفاصيل (يُحظر أي محتوى خارج إطار الدين)..." class="w-full p-3.5 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm"></textarea>
+          <button type="submit" class="w-full min-h-[44px] rounded-xl bg-[#0F5132] text-white text-sm font-semibold cursor-pointer">نشر الموضوع</button>
+        </form>
+      `);
+    }
+
+    function submitTopic(e) {
+      e.preventDefault();
+      const title = document.getElementById('topTitle').value.trim();
+      const body = document.getElementById('topBody').value.trim();
+      const category = document.getElementById('topCategory').value;
+      const check = moderateReligiousText(title + ' ' + body);
+      if (!check.allowed) {
+        const el = document.getElementById('topicErr');
+        el.textContent = check.reason;
+        el.classList.remove('hidden');
+        return;
+      }
+      const newTopic = {
+        id: 'tp_' + Date.now(),
+        title,
+        body,
+        category,
+        authorId: state.user?.uid || 'guest',
+        authorName: state.user?.displayName || 'قارئ كريم',
+        replies: []
+      };
+      state.topics.unshift(newTopic);
+      localStorage.setItem('husayni_topics', JSON.stringify(state.topics));
+      if (fbDb && fbAuth?.currentUser) {
+        fbDb.collection('discussions').doc(newTopic.id).set({
+          title,
+          body,
+          category,
+          authorId: fbAuth.currentUser.uid,
+          authorName: fbAuth.currentUser.displayName || newTopic.authorName,
+          repliesCount: 0,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(() => {});
+      }
+      closeModal();
+      render();
+    }
+
+    function openTopicModal(i) {
+      const t = state.topics[i];
+      if (!t) return;
+      openModal(`
+        <div class="space-y-4">
+          <div class="flex justify-between border-b pb-3"><h3 class="font-amiri text-2xl font-bold">${escapeHtml(t.title)}</h3><button type="button" onclick="closeModal()" class="px-3 py-1 rounded-lg border cursor-pointer">إغلاق</button></div>
+          <p class="text-sm leading-relaxed">${escapeHtml(t.body)}</p>
+          <div class="space-y-2 border-t pt-3">
+            ${(t.replies||[]).map(r => `<div class="p-3 rounded-xl bg-[#FAF8F4] dark:bg-[#0B1117] text-xs"><strong>${escapeHtml(r.authorName)}:</strong> ${escapeHtml(r.body)}</div>`).join('')}
+          </div>
+          <form onsubmit="submitReply(event, ${i})" class="space-y-2">
+            <p id="repErr" class="hidden text-xs text-rose-600"></p>
+            <div class="flex gap-2">
+              <input id="repInput" required placeholder="أضف رداً علمياً..." class="flex-1 min-h-[44px] px-3 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm" />
+              <button type="submit" class="min-h-[44px] px-4 rounded-xl bg-[#0F5132] text-white text-xs font-semibold cursor-pointer">إرسال</button>
+            </div>
+          </form>
+        </div>
+      `);
+    }
+
+    function submitReply(e, idx) {
+      e.preventDefault();
+      const txt = document.getElementById('repInput').value.trim();
+      const check = moderateReligiousText(txt);
+      if (!check.allowed) {
+        const el = document.getElementById('repErr');
+        el.textContent = check.reason;
+        el.classList.remove('hidden');
+        return;
+      }
+      const replyObj = { authorName: state.user?.displayName || 'قارئ كريم', body: txt };
+      state.topics[idx].replies.push(replyObj);
+      localStorage.setItem('husayni_topics', JSON.stringify(state.topics));
+      if (fbDb && fbAuth?.currentUser) {
+        fbDb.collection('discussions').doc(state.topics[idx].id).collection('replies').add({
+          body: txt,
+          authorId: fbAuth.currentUser.uid,
+          authorName: fbAuth.currentUser.displayName || replyObj.authorName,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(() => {});
+      }
+      openTopicModal(idx);
+    }
+
+    function openEditProfileModal() {
+      openModal(`
+        <form onsubmit="saveProfile(event)" class="space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-[#E7E1D6] dark:border-[#1F2B37]">
+            <h3 class="font-amiri text-2xl font-bold">إعداد الملف الشخصي</h3>
+            <button type="button" onclick="closeModal()" class="px-3 py-1 rounded-lg border cursor-pointer">إغلاق</button>
+          </div>
+          <p id="profErr" class="hidden text-xs font-semibold text-rose-600 bg-rose-50 p-3 rounded-xl"></p>
+          <input id="profName" required value="${escapeHtml(state.user?.displayName || '')}" placeholder="الاسم الظاهر" class="w-full min-h-[44px] px-3 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm" />
+          <select id="profStage" class="w-full min-h-[44px] px-3 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm">
+            <option value="قارئ ومحب">قارئ ومحب</option>
+            <option value="طالب مقدمات">طالب مقدمات</option>
+            <option value="طالب سطوح">طالب سطوح</option>
+            <option value="أستاذ وباحث">أستاذ وباحث</option>
+          </select>
+          <input id="profCity" value="${escapeHtml(state.user?.city || 'كربلاء المقدسة')}" placeholder="المدينة" class="w-full min-h-[44px] px-3 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm" />
+          <textarea id="profBio" rows="3" placeholder="نبذة علمية أو دينية (ضمن الإطار الديني فقط)..." class="w-full p-3 rounded-xl border bg-[#FAF8F4] dark:bg-[#0B1117] text-sm">${escapeHtml(state.user?.bio || '')}</textarea>
+          <button type="submit" class="w-full min-h-[44px] rounded-xl bg-[#0F5132] text-white text-sm font-semibold cursor-pointer">حفظ الملف</button>
+        </form>
+      `);
+    }
+
+    function saveProfile(e) {
+      e.preventDefault();
+      const name = document.getElementById('profName').value.trim();
+      const stage = document.getElementById('profStage').value;
+      const city = document.getElementById('profCity').value.trim();
+      const bio = document.getElementById('profBio').value.trim();
+      if (bio.length > 0) {
+        const check = moderateReligiousText(bio + ' علم دين');
+        if (!check.allowed) {
+          const el = document.getElementById('profErr');
+          el.textContent = check.reason;
+          el.classList.remove('hidden');
+          return;
+        }
+      }
+      const uid = fbAuth?.currentUser?.uid || 'me';
+      state.user = { uid, displayName: name, city, bio, studyStage: stage };
+      localStorage.setItem('husayni_demo_user', JSON.stringify(state.user));
+      const idx = state.profiles.findIndex(p => p.userId === uid);
+      const rec = { userId: uid, displayName: name, city, bio: bio || 'عضو في المدونة الحسينية.', studyStage: stage };
+      if (idx >= 0) state.profiles[idx] = rec; else state.profiles.unshift(rec);
+      localStorage.setItem('husayni_profiles', JSON.stringify(state.profiles));
+      if (fbDb && fbAuth?.currentUser) {
+        fbDb.collection('profiles').doc(uid).set({
+          ...rec,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }).catch(() => {});
+      }
+      closeModal();
+      render();
+    }
+
+    function toggleFollow(uid) {
+      const wasFollowing = state.follows.includes(uid);
+      if (wasFollowing) {
+        state.follows = state.follows.filter(id => id !== uid);
+      } else {
+        state.follows.push(uid);
+      }
+      localStorage.setItem('husayni_follows', JSON.stringify(state.follows));
+      if (fbDb && fbAuth?.currentUser && uid !== fbAuth.currentUser.uid) {
+        const followId = fbAuth.currentUser.uid + '_' + uid;
+        if (wasFollowing) {
+          fbDb.collection('follows').doc(followId).delete().catch(() => {});
+        } else {
+          fbDb.collection('follows').doc(followId).set({
+            followerId: fbAuth.currentUser.uid,
+            targetId: uid,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(() => {});
+        }
+      }
+      render();
+    }
+
+    async function signInWithGoogle() {
+      if (!fbAuth || !window.firebase) return;
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        await fbAuth.signInWithPopup(provider);
+      } catch (e) {
+        console.warn('Google sign-in skipped:', e);
+      }
+    }
+
+    async function signOutFirebase() {
+      if (!fbAuth) return;
+      await fbAuth.signOut();
+    }
+
+    if (isFirebaseConfigured && fbAuth && fbDb) {
+      fbAuth.onAuthStateChanged(user => {
+        if (user) {
+          state.user = { uid: user.uid, displayName: user.displayName || 'طالب علم', city: 'كربلاء المقدسة', bio: '', studyStage: 'قارئ ومحب' };
+          fbDb.collection('follows').where('followerId', '==', user.uid).onSnapshot(snap => {
+            state.follows = snap.docs.map(d => d.data().targetId);
+            render();
+          });
+        }
+        render();
+      });
+      fbDb.collection('stories').orderBy('createdAt', 'desc').limit(30).onSnapshot(snap => {
+        if (!snap.empty) {
+          state.stories = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+          render();
+        }
+      });
+      fbDb.collection('profiles').orderBy('updatedAt', 'desc').limit(50).onSnapshot(snap => {
+        if (!snap.empty) {
+          state.profiles = snap.docs.map(d => ({ userId: d.id, ...d.data() }));
+          render();
+        }
+      });
+      fbDb.collection('discussions').orderBy('createdAt', 'desc').limit(30).onSnapshot(snap => {
+        if (!snap.empty) {
+          state.topics = snap.docs.map(d => ({ id: d.id, replies: [], ...d.data() }));
+          render();
+        }
+      });
+    }
+
+    function tapTasbih() {
+      state.tasbihCount++;
+      if (state.tasbihCount === 34 || state.tasbihCount === 67 || state.tasbihCount >= 100) {
+        state.tasbihStep++;
+      }
+      localStorage.setItem('husayni_tasbih_daily', String(state.tasbihCount));
+      render();
+    }
+
+    function answerQuiz(idx) {
+      if (idx === QUIZ[state.activeQuizIdx].ans) state.quizScore++;
+      if (state.activeQuizIdx < QUIZ.length - 1) {
+        state.activeQuizIdx++;
+        render();
+      } else {
+        openModal(`<div class="text-center space-y-4"><h2 class="font-amiri text-3xl font-bold">أحسنت!</h2><p class="text-lg">نتيجتك: ${state.quizScore} من ${QUIZ.length}</p><button type="button" onclick="state.activeQuizIdx=0;state.quizScore=0;closeModal();render()" class="min-h-[44px] px-6 py-2 rounded-xl bg-[#0F5132] text-white cursor-pointer">إعادة المسابقة</button></div>`);
+      }
+    }
+
+    renderRibbon();
+    render();
+  </script>
+</body>
+</html>

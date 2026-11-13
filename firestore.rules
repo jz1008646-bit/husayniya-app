@@ -1,0 +1,185 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isValidTopic(data) {
+      return data.keys().hasAll(['title', 'body', 'category', 'authorId', 'authorName', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['title', 'body', 'category', 'authorId', 'authorName', 'createdAt', 'updatedAt'])
+        && data.title is string && data.title.size() >= 3 && data.title.size() <= 160
+        && data.body is string && data.body.size() >= 5 && data.body.size() <= 4000
+        && data.category is string && data.category in ['فقهية', 'عقائدية', 'قرآنية', 'منطق ونحو', 'سيرة وتاريخ', 'عامة']
+        && data.authorId is string && data.authorId == request.auth.uid
+        && data.authorName is string && data.authorName.size() >= 1 && data.authorName.size() <= 80
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidReply(data, topicId) {
+      return data.keys().hasAll(['topicId', 'body', 'authorId', 'authorName', 'createdAt'])
+        && data.keys().hasOnly(['topicId', 'body', 'authorId', 'authorName', 'createdAt'])
+        && data.topicId is string && data.topicId == topicId && isValidId(data.topicId)
+        && data.body is string && data.body.size() >= 2 && data.body.size() <= 2500
+        && data.authorId is string && data.authorId == request.auth.uid
+        && data.authorName is string && data.authorName.size() >= 1 && data.authorName.size() <= 80
+        && data.createdAt is timestamp;
+    }
+
+    function isValidProgress(data, userId) {
+      return data.keys().hasAll(['userId', 'tasbihDaily', 'completedLessonsCount', 'quizBestScore', 'updatedAt'])
+        && data.keys().hasOnly(['userId', 'tasbihDaily', 'completedLessonsCount', 'quizBestScore', 'updatedAt'])
+        && data.userId is string && data.userId == userId
+        && data.tasbihDaily is int && data.tasbihDaily >= 0 && data.tasbihDaily <= 1000000
+        && data.completedLessonsCount is int && data.completedLessonsCount >= 0 && data.completedLessonsCount <= 500
+        && data.quizBestScore is int && data.quizBestScore >= 0 && data.quizBestScore <= 500
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidProfile(data, userId) {
+      return data.keys().hasAll(['userId', 'displayName', 'bio', 'studyStage', 'city', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['userId', 'displayName', 'bio', 'studyStage', 'city', 'createdAt', 'updatedAt'])
+        && data.userId is string && data.userId == userId && isValidId(data.userId)
+        && data.displayName is string && data.displayName.size() >= 2 && data.displayName.size() <= 80
+        && data.bio is string && data.bio.size() <= 400
+        && data.studyStage is string && data.studyStage in ['قارئ ومحب', 'طالب مقدمات', 'طالب سطوح', 'طالب بحث خارج', 'أستاذ وباحث']
+        && data.city is string && data.city.size() <= 80
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidFollow(data, followId) {
+      return data.keys().hasAll(['followerId', 'followerName', 'targetId', 'targetName', 'createdAt'])
+        && data.keys().hasOnly(['followerId', 'followerName', 'targetId', 'targetName', 'createdAt'])
+        && data.followerId is string && data.followerId == request.auth.uid && isValidId(data.followerId)
+        && data.followerName is string && data.followerName.size() >= 1 && data.followerName.size() <= 80
+        && data.targetId is string && data.targetId != request.auth.uid && isValidId(data.targetId)
+        && data.targetName is string && data.targetName.size() >= 1 && data.targetName.size() <= 80
+        && followId == (request.auth.uid + '_' + data.targetId)
+        && data.createdAt is timestamp;
+    }
+
+    function isValidStory(data) {
+      return data.keys().hasAll(['authorId', 'authorName', 'category', 'caption', 'reference', 'themeColor', 'createdAt', 'expiresAt'])
+        && data.keys().hasOnly(['authorId', 'authorName', 'category', 'caption', 'reference', 'themeColor', 'createdAt', 'expiresAt'])
+        && data.authorId is string && data.authorId == request.auth.uid && isValidId(data.authorId)
+        && data.authorName is string && data.authorName.size() >= 1 && data.authorName.size() <= 80
+        && data.category is string && data.category in ['آية وتأمل', 'حديث مأثور', 'دعاء وذكر', 'فائدة حوزوية', 'زيارة وعتبة']
+        && data.caption is string && data.caption.size() >= 5 && data.caption.size() <= 500
+        && data.reference is string && data.reference.size() <= 120
+        && data.themeColor is string && data.themeColor in ['emerald', 'amber', 'rose', 'slate']
+        && data.createdAt is timestamp
+        && data.expiresAt is timestamp
+        && data.expiresAt > data.createdAt;
+    }
+
+    match /discussions/{topicId} {
+      allow get, list: if true;
+      allow create: if isSignedIn()
+        && isValidId(topicId)
+        && isValidTopic(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isSignedIn()
+        && isValidId(topicId)
+        && existing().authorId == request.auth.uid
+        && isValidTopic(incoming())
+        && incoming().authorId == existing().authorId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'body', 'category', 'updatedAt']);
+      allow delete: if isSignedIn()
+        && isValidId(topicId)
+        && existing().authorId == request.auth.uid;
+
+      match /replies/{replyId} {
+        allow get, list: if true;
+        allow create: if isSignedIn()
+          && isValidId(topicId)
+          && isValidId(replyId)
+          && exists(/databases/$(database)/documents/discussions/$(topicId))
+          && isValidReply(incoming(), topicId)
+          && incoming().createdAt == request.time;
+        allow delete: if isSignedIn()
+          && isValidId(topicId)
+          && isValidId(replyId)
+          && existing().authorId == request.auth.uid;
+      }
+    }
+
+    match /users/{userId}/progress/{docId} {
+      allow get, list: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn()
+        && request.auth.uid == userId
+        && isValidId(docId)
+        && isValidProgress(incoming(), userId)
+        && incoming().updatedAt == request.time;
+      allow update: if isSignedIn()
+        && request.auth.uid == userId
+        && isValidId(docId)
+        && isValidProgress(incoming(), userId)
+        && incoming().userId == existing().userId
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['tasbihDaily', 'completedLessonsCount', 'quizBestScore', 'updatedAt']);
+    }
+
+    match /profiles/{userId} {
+      allow get, list: if true;
+      allow create: if isSignedIn()
+        && request.auth.uid == userId
+        && isValidId(userId)
+        && isValidProfile(incoming(), userId)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isSignedIn()
+        && request.auth.uid == userId
+        && isValidId(userId)
+        && isValidProfile(incoming(), userId)
+        && incoming().userId == existing().userId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'bio', 'studyStage', 'city', 'updatedAt']);
+    }
+
+    match /follows/{followId} {
+      allow get, list: if true;
+      allow create: if isSignedIn()
+        && isValidId(followId)
+        && isValidFollow(incoming(), followId)
+        && exists(/databases/$(database)/documents/profiles/$(incoming().targetId))
+        && incoming().createdAt == request.time;
+      allow delete: if isSignedIn()
+        && isValidId(followId)
+        && existing().followerId == request.auth.uid;
+    }
+
+    match /stories/{storyId} {
+      allow get, list: if true;
+      allow create: if isSignedIn()
+        && isValidId(storyId)
+        && isValidStory(incoming())
+        && incoming().createdAt == request.time;
+      allow delete: if isSignedIn()
+        && isValidId(storyId)
+        && existing().authorId == request.auth.uid;
+    }
+  }
+}

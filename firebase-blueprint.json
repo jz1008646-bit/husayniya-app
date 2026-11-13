@@ -1,0 +1,237 @@
+{
+  "entities": {
+    "DiscussionTopic": {
+      "title": "DiscussionTopic",
+      "description": "A public scholarly or spiritual discussion topic in the discussion arena.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Topic title",
+          "minLength": 3,
+          "maxLength": 160
+        },
+        "body": {
+          "type": "string",
+          "description": "Detailed question or discussion prompt",
+          "minLength": 5,
+          "maxLength": 4000
+        },
+        "category": {
+          "type": "string",
+          "enum": ["فقهية", "عقائدية", "قرآنية", "منطق ونحو", "سيرة وتاريخ", "عامة"]
+        },
+        "authorId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the topic author"
+        },
+        "authorName": {
+          "type": "string",
+          "description": "Public display name of the author",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["title", "body", "category", "authorId", "authorName", "createdAt", "updatedAt"]
+    },
+    "DiscussionReply": {
+      "title": "DiscussionReply",
+      "description": "A reply posted by a reader or student to a discussion topic.",
+      "type": "object",
+      "properties": {
+        "topicId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "body": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 2500
+        },
+        "authorId": {
+          "type": "string"
+        },
+        "authorName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["topicId", "body", "authorId", "authorName", "createdAt"]
+    },
+    "UserProgress": {
+      "title": "UserProgress",
+      "description": "User spiritual and study progress synchronized across sessions.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "tasbihDaily": {
+          "type": "number"
+        },
+        "completedLessonsCount": {
+          "type": "number"
+        },
+        "quizBestScore": {
+          "type": "number"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "tasbihDaily", "completedLessonsCount", "quizBestScore", "updatedAt"]
+    },
+    "PublicProfile": {
+      "title": "PublicProfile",
+      "description": "Public non-PII profile of a reader or Hawza student for discovery and following.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "bio": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 400
+        },
+        "studyStage": {
+          "type": "string",
+          "enum": ["قارئ ومحب", "طالب مقدمات", "طالب سطوح", "طالب بحث خارج", "أستاذ وباحث"]
+        },
+        "city": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 80
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "displayName", "bio", "studyStage", "city", "createdAt", "updatedAt"]
+    },
+    "UserFollow": {
+      "title": "UserFollow",
+      "description": "Follow relationship between two users.",
+      "type": "object",
+      "properties": {
+        "followerId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "followerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "targetId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "targetName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["followerId", "followerName", "targetId", "targetName", "createdAt"]
+    },
+    "StoryItem": {
+      "title": "StoryItem",
+      "description": "A 24-hour religious story shared by an authenticated community member.",
+      "type": "object",
+      "properties": {
+        "authorId": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "authorName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "category": {
+          "type": "string",
+          "enum": ["آية وتأمل", "حديث مأثور", "دعاء وذكر", "فائدة حوزوية", "زيارة وعتبة"]
+        },
+        "caption": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 500
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 120
+        },
+        "themeColor": {
+          "type": "string",
+          "enum": ["emerald", "amber", "rose", "slate"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["authorId", "authorName", "category", "caption", "reference", "themeColor", "createdAt", "expiresAt"]
+    }
+  },
+  "firestore": {
+    "/discussions/{topicId}": {
+      "schema": { "$ref": "#/entities/DiscussionTopic" },
+      "description": "Discussion arena topics created by authenticated readers and Hawza students."
+    },
+    "/discussions/{topicId}/replies/{replyId}": {
+      "schema": { "$ref": "#/entities/DiscussionReply" },
+      "description": "Replies nested under each discussion topic."
+    },
+    "/users/{userId}/progress/{docId}": {
+      "schema": { "$ref": "#/entities/UserProgress" },
+      "description": "Private progress summary owned by the authenticated user."
+    },
+    "/profiles/{userId}": {
+      "schema": { "$ref": "#/entities/PublicProfile" },
+      "description": "Public non-PII profiles for community members and Hawza students."
+    },
+    "/follows/{followId}": {
+      "schema": { "$ref": "#/entities/UserFollow" },
+      "description": "Public follower-following graph keyed by {followerId}_{targetId}."
+    },
+    "/stories/{storyId}": {
+      "schema": { "$ref": "#/entities/StoryItem" },
+      "description": "Short religious stories shared by users."
+    }
+  }
+}
