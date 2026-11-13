@@ -64,7 +64,8 @@ export default function App() {
   const [completedLessons, setCompletedLessons] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('husayni_completed_lessons');
-      return saved ? JSON.parse(saved) : [];
+      const parsed = saved ? JSON.parse(saved) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
